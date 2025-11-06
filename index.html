@@ -1,0 +1,1174 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard STEPS Paraguay 2023</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --success-color: #27ae60;
+            --warning-color: #f39c12;
+            --danger-color: #e74c3c;
+            --light-color: #ecf0f1;
+            --dark-color: #34495e;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+            color: #333;
+        }
+        
+        .dashboard-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 1.5rem 0;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .card {
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            margin-bottom: 1.5rem;
+            border: none;
+            transition: transform 0.3s;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .card-header {
+            background-color: white;
+            border-bottom: 1px solid #eee;
+            font-weight: 600;
+            padding: 1rem 1.25rem;
+        }
+        
+        .kpi-card {
+            text-align: center;
+            padding: 1.5rem;
+        }
+        
+        .kpi-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin: 0.5rem 0;
+        }
+        
+        .kpi-title {
+            font-size: 0.9rem;
+            color: #6c757d;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .section-icon {
+            font-size: 1.5rem;
+            margin-right: 0.5rem;
+            color: var(--secondary-color);
+        }
+        
+        .nav-pills .nav-link.active {
+            background-color: var(--secondary-color);
+        }
+        
+        .chart-container {
+            position: relative;
+            height: 300px;
+            width: 100%;
+        }
+        
+        .risk-low {
+            color: var(--success-color);
+        }
+        
+        .risk-medium {
+            color: var(--warning-color);
+        }
+        
+        .risk-high {
+            color: var(--danger-color);
+        }
+        
+        .tab-content {
+            padding-top: 1.5rem;
+        }
+        
+        .footer {
+            margin-top: 3rem;
+            padding: 1.5rem 0;
+            background-color: var(--primary-color);
+            color: white;
+            text-align: center;
+        }
+        
+        .info-section {
+            background-color: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            margin-bottom: 1.5rem;
+        }
+        
+        .source-info {
+            font-size: 0.9rem;
+            color: #6c757d;
+            font-style: italic;
+            margin-top: 1rem;
+            border-top: 1px solid #eee;
+            padding-top: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="dashboard-header">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h1><i class="fas fa-chart-line"></i> Dashboard STEPS Paraguay 2023</h1>
+                    <p class="lead mb-0">Segunda Encuesta Nacional sobre Factores de Riesgo de las Enfermedades No Transmisibles</p>
+                </div>
+                <div class="col-md-4 text-end">
+                    <img src="https://via.placeholder.com/120x60?text=LOGO" alt="Logo" class="img-fluid">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Información sobre la fuente de datos -->
+        <div class="info-section">
+            <h4><i class="fas fa-database section-icon"></i>Fuente de Datos</h4>
+            <p>Este dashboard presenta un análisis elaborado a partir de la base de datos pública disponible en el <strong>Catálogo de Metadatos y Microdatos del Paraguay</strong>, a través de la plataforma <strong>Archivo Nacional de Datos - ANDA</strong>.</p>
+            
+            <h5 class="mt-3">Contexto Nacional</h5>
+            <p>La implementación del Catálogo de Metadatos y Microdatos del Paraguay a través del software Archivo Nacional de Datos (ANDA), se enmarca dentro del plan de fortalecimiento de registros administrativos que consiste en la documentación de metadatos y microdatos, por medio de herramientas informáticas basadas en estándares internacionales de documentación de operaciones estadísticas.</p>
+            
+            <p class="source-info">
+                <i class="fas fa-info-circle"></i> Los datos presentados corresponden a la Segunda Encuesta Nacional sobre Factores de Riesgo de las Enfermedades No Transmisibles (STEPS) realizada en Paraguay en 2022.
+            </p>
+        </div>
+
+        <!-- Navegación por pestañas -->
+        <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="pills-overview-tab" data-bs-toggle="pill" data-bs-target="#pills-overview" type="button" role="tab" aria-controls="pills-overview" aria-selected="true">
+                    <i class="fas fa-home section-icon"></i>Resumen
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="pills-tabaco-tab" data-bs-toggle="pill" data-bs-target="#pills-tabaco" type="button" role="tab" aria-controls="pills-tabaco" aria-selected="false">
+                    <i class="fas fa-smoking section-icon"></i>Tabaco
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="pills-alcohol-tab" data-bs-toggle="pill" data-bs-target="#pills-alcohol" type="button" role="tab" aria-controls="pills-alcohol" aria-selected="false">
+                    <i class="fas fa-wine-glass-alt section-icon"></i>Alcohol
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="pills-alimentacion-tab" data-bs-toggle="pill" data-bs-target="#pills-alimentacion" type="button" role="tab" aria-controls="pills-alimentacion" aria-selected="false">
+                    <i class="fas fa-apple-alt section-icon"></i>Alimentación
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="pills-actividad-tab" data-bs-toggle="pill" data-bs-target="#pills-actividad" type="button" role="tab" aria-controls="pills-actividad" aria-selected="false">
+                    <i class="fas fa-running section-icon"></i>Actividad Física
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="pills-salud-tab" data-bs-toggle="pill" data-bs-target="#pills-salud" type="button" role="tab" aria-controls="pills-salud" aria-selected="false">
+                    <i class="fas fa-heartbeat section-icon"></i>Salud
+                </button>
+            </li>
+        </ul>
+
+        <div class="tab-content" id="pills-tabContent">
+            <!-- Pestaña de Resumen -->
+            <div class="tab-pane fade show active" id="pills-overview" role="tabpanel" aria-labelledby="pills-overview-tab">
+                <div class="row">
+                    <!-- KPIs principales -->
+                    <div class="col-md-3">
+                        <div class="card kpi-card">
+                            <div class="kpi-title">Prevalencia de Tabaquismo</div>
+                            <div class="kpi-value risk-high">12.5%</div>
+                            <div class="kpi-subtitle">Población adulta</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card kpi-card">
+                            <div class="kpi-title">Hipertensión Arterial</div>
+                            <div class="kpi-value risk-medium">38.5%</div>
+                            <div class="kpi-subtitle">Mayores de 18 años</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card kpi-card">
+                            <div class="kpi-title">Obesidad (IMC ≥30)</div>
+                            <div class="kpi-value risk-high">32.1%</div>
+                            <div class="kpi-subtitle">Población adulta</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card kpi-card">
+                            <div class="kpi-title">Sedentarismo</div>
+                            <div class="kpi-value risk-medium">43.3%</div>
+                            <div class="kpi-subtitle">< 150 min/semana</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mt-4">
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header">
+                                <i class="fas fa-male section-icon"></i>Distribución por Sexo
+                            </div>
+                            <div class="card-body">
+                                <div class="chart-container">
+                                    <canvas id="sexoChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header">
+                                <i class="fas fa-users section-icon"></i>Distribución por Grupo de Edad
+                            </div>
+                            <div class="card-body">
+                                <div class="chart-container">
+                                    <canvas id="edadChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mt-4">
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header">
+                                <i class="fas fa-graduation-cap section-icon"></i>Nivel Educativo
+                            </div>
+                            <div class="card-body">
+                                <div class="chart-container">
+                                    <canvas id="educacionChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header">
+                                <i class="fas fa-map-marker-alt section-icon"></i>Distribución por Área
+                            </div>
+                            <div class="card-body">
+                                <div class="chart-container">
+                                    <canvas id="areaChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pestaña de Tabaco -->
+            <div class="tab-pane fade" id="pills-tabaco" role="tabpanel" aria-labelledby="pills-tabaco-tab">
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="card kpi-card">
+                            <div class="kpi-title">Consumo Actual de Tabaco</div>
+                            <div class="kpi-value risk-high">12.5%</div>
+                            <div class="kpi-subtitle">Población adulta</div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card kpi-card">
+                            <div class="kpi-title">Fumadores Diarios</div>
+                            <div class="kpi-value risk-high">7.3%</div>
+                            <div class="kpi-subtitle">De los que fuman</div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card kpi-card">
+                            <div class="kpi-title">Conocen Vapeo</div>
+                            <div class="kpi-value risk-medium">89.2%</div>
+                            <div class="kpi-subtitle">Han oído sobre vapeo</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mt-4">
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header">
+                                <i class="fas fa-chart-bar section-icon"></i>Consumo de Tabaco por Sexo
+                            </div>
+                            <div class="card-body">
+                                <div class="chart-container">
+                                    <canvas id="tabacoSexoChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header">
+                                <i class="fas fa-chart-pie section-icon"></i>Frecuencia de Consumo
+                            </div>
+                            <div class="card-body">
+                                <div class="chart-container">
+                                    <canvas id="frecuenciaTabacoChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pestaña de Alcohol -->
+            <div class="tab-pane fade" id="pills-alcohol" role="tabpanel" aria-labelledby="pills-alcohol-tab">
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="card kpi-card">
+                            <div class="kpi-title">Consumo últimos 12 meses</div>
+                            <div class="kpi-value risk-medium">76.8%</div>
+                            <div class="kpi-subtitle">Población adulta</div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card kpi-card">
+                            <div class="kpi-title">Consumo Excesivo</div>
+                            <div class="kpi-value risk-high">26.5%</div>
+                            <div class="kpi-subtitle">1-2 días por semana</div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card kpi-card">
+                            <div class="kpi-title">Consumo Diario</div>
+                            <div class="kpi-value risk-medium">1.0%</div>
+                            <div class="kpi-subtitle">Todos los días</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mt-4">
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header">
+                                <i class="fas fa-chart-bar section-icon"></i>Consumo de Alcohol por Grupo de Edad
+                            </div>
+                            <div class="card-body">
+                                <div class="chart-container">
+                                    <canvas id="alcoholEdadChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header">
+                                <i class="fas fa-chart-pie section-icon"></i>Frecuencia de Consumo
+                            </div>
+                            <div class="card-body">
+                                <div class="chart-container">
+                                    <canvas id="frecuenciaAlcoholChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pestaña de Alimentación -->
+            <div class="tab-pane fade" id="pills-alimentacion" role="tabpanel" aria-labelledby="pills-alimentacion-tab">
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="card kpi-card">
+                            <div class="kpi-title">Frutas < 5 porciones/día</div>
+                            <div class="kpi-value risk-high">98.2%</div>
+                            <div class="kpi-subtitle">Población adulta</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card kpi-card">
+                            <div class="kpi-title">Verduras < 5 porciones/día</div>
+                            <div class="kpi-value risk-high">99.7%</div>
+                            <div class="kpi-subtitle">Población adulta</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card kpi-card">
+                            <div class="kpi-title">Uso de Sal</div>
+                            <div class="kpi-value risk-medium">9.6%</div>
+                            <div class="kpi-subtitle">Siempre agregan sal</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card kpi-card">
+                            <div class="kpi-title">Reducen Sal</div>
+                            <div class="kpi-value risk-low">74.4%</div>
+                            <div class="kpi-subtitle">Siempre reducen sal</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mt-4">
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header">
+                                <i class="fas fa-apple-alt section-icon"></i>Consumo de Frutas por Día
+                            </div>
+                            <div class="card-body">
+                                <div class="chart-container">
+                                    <canvas id="frutasChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header">
+                                <i class="fas fa-carrot section-icon"></i>Consumo de Verduras por Día
+                            </div>
+                            <div class="card-body">
+                                <div class="chart-container">
+                                    <canvas id="verdurasChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pestaña de Actividad Física -->
+            <div class="tab-pane fade" id="pills-actividad" role="tabpanel" aria-labelledby="pills-actividad-tab">
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="card kpi-card">
+                            <div class="kpi-title">Sedentarismo</div>
+                            <div class="kpi-value risk-high">43.3%</div>
+                            <div class="kpi-subtitle">< 150 min/semana</div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card kpi-card">
+                            <div class="kpi-title">Actividad Suficiente</div>
+                            <div class="kpi-value risk-medium">56.7%</div>
+                            <div class="kpi-subtitle">≥150 min/semana</div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card kpi-card">
+                            <div class="kpi-title">Sedentarismo Femenino</div>
+                            <div class="kpi-value risk-high">57.3%</div>
+                            <div class="kpi-subtitle">Mujeres sedentarias</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mt-4">
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header">
+                                <i class="fas fa-running section-icon"></i>Nivel de Actividad Física por Sexo
+                            </div>
+                            <div class="card-body">
+                                <div class="chart-container">
+                                    <canvas id="actividadSexoChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header">
+                                <i class="fas fa-clock section-icon"></i>Sedentarismo por Sexo
+                            </div>
+                            <div class="card-body">
+                                <div class="chart-container">
+                                    <canvas id="sedentarismoChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pestaña de Salud -->
+            <div class="tab-pane fade" id="pills-salud" role="tabpanel" aria-labelledby="pills-salud-tab">
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="card kpi-card">
+                            <div class="kpi-title">Hipertensión</div>
+                            <div class="kpi-value risk-medium">38.5%</div>
+                            <div class="kpi-subtitle">Mayores de 18 años</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card kpi-card">
+                            <div class="kpi-title">Diabetes</div>
+                            <div class="kpi-value risk-medium">6.8%</div>
+                            <div class="kpi-subtitle">Glucosa ≥126 mg/dL</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card kpi-card">
+                            <div class="kpi-title">Colesterol Alto</div>
+                            <div class="kpi-value risk-medium">21.9%</div>
+                            <div class="kpi-subtitle">Colesterol total ≥200 mg/dL</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card kpi-card">
+                            <div class="kpi-title">Obesidad</div>
+                            <div class="kpi-value risk-high">32.1%</div>
+                            <div class="kpi-subtitle">IMC ≥30</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mt-4">
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header">
+                                <i class="fas fa-weight section-icon"></i>Distribución del IMC
+                            </div>
+                            <div class="card-body">
+                                <div class="chart-container">
+                                    <canvas id="imcChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header">
+                                <i class="fas fa-tachometer-alt section-icon"></i>Presión Arterial Promedio
+                            </div>
+                            <div class="card-body">
+                                <div class="chart-container">
+                                    <canvas id="presionChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mt-4">
+                    <div class="col-md-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <i class="fas fa-stethoscope section-icon"></i>Tamizajes por Sexo
+                            </div>
+                            <div class="card-body">
+                                <div class="chart-container">
+                                    <canvas id="tamizajesChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+        <div class="container">
+            <p>© 2023 - Encuesta STEPS Paraguay - Ministerio de Salud Pública y Bienestar Social</p>
+            <p class="small">Elaboración propia a partir de la base de datos pública disponible en el Catálogo de Metadatos y Microdatos del Paraguay, a través de la plataforma Archivo Nacional de Datos - ANDA</p>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Datos basados en los resultados reales de SPSS
+        const datosReales = {
+            // Datos demográficos
+            sexo: {
+                labels: ['Masculino', 'Femenino'],
+                valores: [50.3, 49.7]
+            },
+            edad: {
+                labels: ['18-29', '30-44', '45-59', '60-69'],
+                valores: [34.4, 34.3, 21.8, 9.5]
+            },
+            educacion: {
+                labels: ['Superior Univ.', 'Superior No Univ.', 'Educ. Media', 'EEB 3er Ciclo', 'EEB 2do Ciclo', 'EEB 1er Ciclo', 'Ninguno'],
+                valores: [13.9, 4.4, 35.9, 13.4, 19.2, 9.9, 3.4]
+            },
+            area: {
+                labels: ['Urbana', 'Rural'],
+                valores: [74.8, 25.2]
+            },
+            
+            // Datos de tabaco
+            tabacoActual: 12.5,
+            fumadorDiario: 7.3,
+            conoceVapeo: 89.2,
+            tabacoSexo: {
+                masculino: 19.4,
+                femenino: 5.4
+            },
+            frecuenciaTabaco: {
+                diario: 7.3,
+                noDiario: 5.1,
+                exfumadorNunca: 87.5
+            },
+            
+            // Datos de alcohol
+            alcohol12M: 76.8,
+            frecuenciaAlcohol: {
+                diario: 1.0,
+                entre5y6: 1.0,
+                entre3y4: 5.1,
+                entre1y2: 26.5,
+                entre1y3: 29.4,
+                menosUnaVez: 36.8,
+                nunca: 0.1
+            },
+            alcoholEdad: {
+                '18-29': 82.6,
+                '30-44': 80.6,
+                '45-59': 70.0,
+                '60-69': 57.5
+            },
+            
+            // Datos de alimentación
+            frutasInsuf: 98.2,
+            verdurasInsuf: 99.7,
+            usoSal: 9.6,
+            reduceSal: 74.4,
+            frutasCat: {
+                '<1': 66.1,
+                '1-2': 22.3,
+                '3-4': 9.7,
+                '≥5': 1.9
+            },
+            verdurasCat: {
+                '<1': 87.5,
+                '1-2': 9.8,
+                '3-4': 2.3,
+                '≥5': 0.3
+            },
+            
+            // Datos de actividad física
+            sedentario: 43.3,
+            actividadSexo: {
+                masculino: {
+                    sedentario: 42.7,
+                    insuficiente: 44.6,
+                    suficiente: 59.7
+                },
+                femenino: {
+                    sedentario: 57.3,
+                    insuficiente: 55.4,
+                    suficiente: 40.3
+                }
+            },
+            
+            // Datos de salud
+            hipertension: 38.5,
+            diabetes: 6.8,
+            colesterolAlto: 21.9,
+            obesidad: 32.1,
+            imcCat: {
+                bajoPeso: 1.4,
+                normal: 29.0,
+                sobrepeso: 37.0,
+                obesidad: 32.6
+            },
+            presionArterial: {
+                sistolica: 127.85,
+                diastolica: 83.87
+            },
+            tamizajes: {
+                masculino: {
+                    hipertension: 47.1,
+                    diabetes: 39.9
+                },
+                femenino: {
+                    hipertension: 52.9,
+                    diabetes: 60.1
+                }
+            }
+        };
+
+        // Variables para almacenar los gráficos
+        let charts = {};
+
+        // Inicializar gráficos cuando el DOM esté listo
+        document.addEventListener('DOMContentLoaded', function() {
+            inicializarGraficos();
+        });
+
+        function inicializarGraficos() {
+            // Gráfico de distribución por sexo
+            const sexoCtx = document.getElementById('sexoChart').getContext('2d');
+            charts.sexoChart = new Chart(sexoCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: datosReales.sexo.labels,
+                    datasets: [{
+                        data: datosReales.sexo.valores,
+                        backgroundColor: ['#3498db', '#e74c3c'],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+
+            // Gráfico de distribución por edad
+            const edadCtx = document.getElementById('edadChart').getContext('2d');
+            charts.edadChart = new Chart(edadCtx, {
+                type: 'bar',
+                data: {
+                    labels: datosReales.edad.labels,
+                    datasets: [{
+                        label: 'Porcentaje',
+                        data: datosReales.edad.valores,
+                        backgroundColor: '#2ecc71',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 40,
+                            title: {
+                                display: true,
+                                text: 'Porcentaje (%)'
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Gráfico de nivel educativo
+            const educacionCtx = document.getElementById('educacionChart').getContext('2d');
+            charts.educacionChart = new Chart(educacionCtx, {
+                type: 'bar',
+                data: {
+                    labels: datosReales.educacion.labels,
+                    datasets: [{
+                        label: 'Porcentaje',
+                        data: datosReales.educacion.valores,
+                        backgroundColor: '#9b59b6',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            beginAtZero: true,
+                            max: 40,
+                            title: {
+                                display: true,
+                                text: 'Porcentaje (%)'
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Gráfico de distribución por área
+            const areaCtx = document.getElementById('areaChart').getContext('2d');
+            charts.areaChart = new Chart(areaCtx, {
+                type: 'pie',
+                data: {
+                    labels: datosReales.area.labels,
+                    datasets: [{
+                        data: datosReales.area.valores,
+                        backgroundColor: ['#f39c12', '#16a085'],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+
+            // Gráficos para la pestaña de Tabaco
+            const tabacoSexoCtx = document.getElementById('tabacoSexoChart').getContext('2d');
+            charts.tabacoSexoChart = new Chart(tabacoSexoCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Masculino', 'Femenino'],
+                    datasets: [{
+                        label: 'Consumo Actual',
+                        data: [datosReales.tabacoSexo.masculino, datosReales.tabacoSexo.femenino],
+                        backgroundColor: '#e74c3c',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 25,
+                            title: {
+                                display: true,
+                                text: 'Porcentaje (%)'
+                            }
+                        }
+                    }
+                }
+            });
+
+            const frecuenciaTabacoCtx = document.getElementById('frecuenciaTabacoChart').getContext('2d');
+            charts.frecuenciaTabacoChart = new Chart(frecuenciaTabacoCtx, {
+                type: 'pie',
+                data: {
+                    labels: ['Diario', 'No Diario', 'Exfumador/Nunca'],
+                    datasets: [{
+                        data: [
+                            datosReales.frecuenciaTabaco.diario,
+                            datosReales.frecuenciaTabaco.noDiario,
+                            datosReales.frecuenciaTabaco.exfumadorNunca
+                        ],
+                        backgroundColor: ['#e74c3c', '#f39c12', '#3498db'],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+
+            // Gráficos para la pestaña de Alcohol
+            const alcoholEdadCtx = document.getElementById('alcoholEdadChart').getContext('2d');
+            charts.alcoholEdadChart = new Chart(alcoholEdadCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['18-29', '30-44', '45-59', '60-69'],
+                    datasets: [{
+                        label: 'Consumo últimos 12 meses',
+                        data: [
+                            datosReales.alcoholEdad['18-29'],
+                            datosReales.alcoholEdad['30-44'],
+                            datosReales.alcoholEdad['45-59'],
+                            datosReales.alcoholEdad['60-69']
+                        ],
+                        backgroundColor: '#3498db',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 90,
+                            title: {
+                                display: true,
+                                text: 'Porcentaje (%)'
+                            }
+                        }
+                    }
+                }
+            });
+
+            const frecuenciaAlcoholCtx = document.getElementById('frecuenciaAlcoholChart').getContext('2d');
+            charts.frecuenciaAlcoholChart = new Chart(frecuenciaAlcoholCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Todos los días', '5-6 días/sem', '3-4 días/sem', '1-2 días/sem', '1-3 días/mes', '<1 vez/mes', 'Nunca'],
+                    datasets: [{
+                        data: [
+                            datosReales.frecuenciaAlcohol.diario,
+                            datosReales.frecuenciaAlcohol.entre5y6,
+                            datosReales.frecuenciaAlcohol.entre3y4,
+                            datosReales.frecuenciaAlcohol.entre1y2,
+                            datosReales.frecuenciaAlcohol.entre1y3,
+                            datosReales.frecuenciaAlcohol.menosUnaVez,
+                            datosReales.frecuenciaAlcohol.nunca
+                        ],
+                        backgroundColor: ['#e74c3c', '#f39c12', '#f1c40f', '#2ecc71', '#3498db', '#9b59b6', '#95a5a6'],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+
+            // Gráficos para la pestaña de Alimentación
+            const frutasCtx = document.getElementById('frutasChart').getContext('2d');
+            charts.frutasChart = new Chart(frutasCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['<1', '1-2', '3-4', '≥5'],
+                    datasets: [{
+                        label: 'Porciones por día',
+                        data: [
+                            datosReales.frutasCat['<1'],
+                            datosReales.frutasCat['1-2'],
+                            datosReales.frutasCat['3-4'],
+                            datosReales.frutasCat['≥5']
+                        ],
+                        backgroundColor: '#2ecc71',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 70,
+                            title: {
+                                display: true,
+                                text: 'Porcentaje (%)'
+                            }
+                        }
+                    }
+                }
+            });
+
+            const verdurasCtx = document.getElementById('verdurasChart').getContext('2d');
+            charts.verdurasChart = new Chart(verdurasCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['<1', '1-2', '3-4', '≥5'],
+                    datasets: [{
+                        label: 'Porciones por día',
+                        data: [
+                            datosReales.verdurasCat['<1'],
+                            datosReales.verdurasCat['1-2'],
+                            datosReales.verdurasCat['3-4'],
+                            datosReales.verdurasCat['≥5']
+                        ],
+                        backgroundColor: '#27ae60',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100,
+                            title: {
+                                display: true,
+                                text: 'Porcentaje (%)'
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Gráficos para la pestaña de Actividad Física
+            const actividadSexoCtx = document.getElementById('actividadSexoChart').getContext('2d');
+            charts.actividadSexoChart = new Chart(actividadSexoCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Sedentario', 'Insuficiente', 'Suficiente'],
+                    datasets: [{
+                        label: 'Masculino',
+                        data: [
+                            datosReales.actividadSexo.masculino.sedentario,
+                            datosReales.actividadSexo.masculino.insuficiente,
+                            datosReales.actividadSexo.masculino.suficiente
+                        ],
+                        backgroundColor: '#3498db',
+                        borderWidth: 1
+                    }, {
+                        label: 'Femenino',
+                        data: [
+                            datosReales.actividadSexo.femenino.sedentario,
+                            datosReales.actividadSexo.femenino.insuficiente,
+                            datosReales.actividadSexo.femenino.suficiente
+                        ],
+                        backgroundColor: '#e74c3c',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 70,
+                            title: {
+                                display: true,
+                                text: 'Porcentaje (%)'
+                            }
+                        }
+                    }
+                }
+            });
+
+            const sedentarismoCtx = document.getElementById('sedentarismoChart').getContext('2d');
+            charts.sedentarismoChart = new Chart(sedentarismoCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Masculino', 'Femenino'],
+                    datasets: [{
+                        data: [42.7, 57.3],
+                        backgroundColor: ['#3498db', '#e74c3c'],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+
+            // Gráficos para la pestaña de Salud
+            const imcCtx = document.getElementById('imcChart').getContext('2d');
+            charts.imcChart = new Chart(imcCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Bajo peso', 'Normal', 'Sobrepeso', 'Obesidad'],
+                    datasets: [{
+                        label: 'Porcentaje',
+                        data: [
+                            datosReales.imcCat.bajoPeso,
+                            datosReales.imcCat.normal,
+                            datosReales.imcCat.sobrepeso,
+                            datosReales.imcCat.obesidad
+                        ],
+                        backgroundColor: ['#3498db', '#2ecc71', '#f39c12', '#e74c3c'],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 40,
+                            title: {
+                                display: true,
+                                text: 'Porcentaje (%)'
+                            }
+                        }
+                    }
+                }
+            });
+
+            const presionCtx = document.getElementById('presionChart').getContext('2d');
+            charts.presionChart = new Chart(presionCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Sistólica', 'Diastólica'],
+                    datasets: [{
+                        label: 'Promedio (mmHg)',
+                        data: [datosReales.presionArterial.sistolica, datosReales.presionArterial.diastolica],
+                        backgroundColor: ['#e74c3c', '#3498db'],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 140,
+                            title: {
+                                display: true,
+                                text: 'mmHg'
+                            }
+                        }
+                    }
+                }
+            });
+
+            const tamizajesCtx = document.getElementById('tamizajesChart').getContext('2d');
+            charts.tamizajesChart = new Chart(tamizajesCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Hipertensión', 'Diabetes'],
+                    datasets: [{
+                        label: 'Masculino',
+                        data: [
+                            datosReales.tamizajes.masculino.hipertension,
+                            datosReales.tamizajes.masculino.diabetes
+                        ],
+                        backgroundColor: '#3498db',
+                        borderWidth: 1
+                    }, {
+                        label: 'Femenino',
+                        data: [
+                            datosReales.tamizajes.femenino.hipertension,
+                            datosReales.tamizajes.femenino.diabetes
+                        ],
+                        backgroundColor: '#e74c3c',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 70,
+                            title: {
+                                display: true,
+                                text: 'Porcentaje (%)'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+    </script>
+</body>
+</html>
